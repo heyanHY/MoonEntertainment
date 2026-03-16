@@ -1,0 +1,129 @@
+@reference "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', 'Segoe UI', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.95);
+  background-color: #0f172a;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* 自定义组件样式 */
+@layer components {
+  .card {
+    @apply bg-white text-black p-4 rounded-lg min-w-[90px] text-center shadow-lg transform transition-all duration-300 hover:scale-105;
+  }
+  
+  .btn-primary {
+    @apply bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+  }
+  
+  .btn-accent {
+    @apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+  }
+  
+  .room-card {
+    @apply bg-gradient-to-br from-green-800 to-green-900 p-6 rounded-lg border border-green-600 shadow-xl transition-all duration-300 hover:shadow-2xl;
+  }
+  
+  .game-section {
+    @apply bg-gradient-to-br from-green-800 to-green-900 p-6 rounded-lg border border-green-600 shadow-xl mb-6;
+  }
+  
+  .input-field {
+    @apply w-full p-4 bg-white text-gray-800 rounded-full text-center text-lg shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-500;
+  }
+  
+  .section-title {
+    @apply text-2xl font-bold text-yellow-400 mb-4;
+  }
+  
+  .card-back {
+    @apply bg-gradient-to-br from-red-500 to-red-700 p-4 rounded-lg min-w-[90px] text-center shadow-lg flex items-center justify-center;
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* 卡片动画 */
+@keyframes cardFlip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+.card-flip {
+  animation: cardFlip 0.6s ease-in-out forwards;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .card {
+    @apply min-w-[70px] p-3;
+  }
+  
+  .section-title {
+    @apply text-xl;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-accent {
+    @apply py-2 px-6 text-base;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    @apply min-w-[60px] p-2;
+  }
+  
+  .section-title {
+    @apply text-lg;
+  }
+  
+  .input-field {
+    @apply p-3 text-base;
+  }
+}
