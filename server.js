@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
 
 const app = express();
 const server = http.createServer(app);
@@ -11,6 +12,14 @@ const io = new Server(server, {
     methods: ['GET', 'POST']
   }
 });
+
+// 生产环境托管前端静态文件
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
+}
 
 // 房间存储
 const rooms = {};
