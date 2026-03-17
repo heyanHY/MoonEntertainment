@@ -18,8 +18,8 @@ function App() {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    // 开发环境连接 localhost，生产环境自动连接当前域名
-    const socketUrl = import.meta.env.DEV ? 'http://localhost:3005' : window.location.origin;
+    // 开发环境连接 localhost，生产环境生产环境连接 Railway 后端
+    const socketUrl = import.meta.env.DEV ? 'http://localhost:3005' : 'https://moonentertainment-production.up.railway.app';
     const newSocket = io(socketUrl);
     setSocket(newSocket);
 
