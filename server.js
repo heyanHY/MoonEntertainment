@@ -20,7 +20,8 @@ const io = new Server(server, {
 // 生产环境托管前端静态文件
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
-  app.get('/*', (req, res) => {
+  // 对于任何未匹配的请求，都返回 index.html (SPA)
+  app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
   });
 }
