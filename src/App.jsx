@@ -283,7 +283,7 @@ function App() {
 
   if (page === 'home') {
     return (
-      <div className="min-h-screen p-4 flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900">
+      <div className="min-h-screen p-4 flex items-center justify-center bg-indigo-900 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900">
         <div className="container mx-auto w-full max-w-sm">
           <div className="flex flex-col items-center justify-center min-h-[80vh] fade-in">
             <div className="flex items-center mb-12">
@@ -306,7 +306,7 @@ function App() {
             </div>
             <button
               onClick={handleEnterGame}
-              className="px-10 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 mb-12 w-full max-w-xs"
+              className="px-10 py-3 bg-yellow-500 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 mb-12 w-full max-w-xs"
             >
               进入游戏
             </button>
@@ -343,7 +343,7 @@ function App() {
 
   if (page === 'lobby') {
     return (
-      <div className="min-h-screen p-4 bg-gradient-to-br from-green-900 to-green-800">
+      <div className="min-h-screen p-4 bg-green-900 bg-gradient-to-br from-green-900 to-green-800">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 fade-in">
             <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 mb-4 md:mb-0">游戏大厅</h2>
@@ -356,7 +356,7 @@ function App() {
           <div className="flex flex-col gap-3 mb-8 items-center">
             <button
               onClick={handleCreateRoom}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full max-w-xs"
+              className="px-6 py-3 bg-green-600 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full max-w-xs"
             >
               创建房间
             </button>
@@ -372,7 +372,7 @@ function App() {
             </div>
             <button
               onClick={handleJoinRoom}
-              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full max-w-xs"
+              className="px-6 py-3 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full max-w-xs"
             >
               加入房间
             </button>
@@ -397,7 +397,7 @@ function App() {
                     </div>
                     <button
                       onClick={() => handleJoinExistingRoom(room.id)}
-                      className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                      className="w-full px-4 py-2 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                     >
                       加入
                     </button>
@@ -420,7 +420,7 @@ function App() {
     // 游戏准备界面
     if (!game || game.gameState === 'waiting') {
       return (
-        <div className="min-h-screen p-4 bg-gradient-to-br from-green-900 to-green-800">
+        <div className="min-h-screen p-4 bg-green-900 bg-gradient-to-br from-green-900 to-green-800">
           <div className="container mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4">
               <div className="mb-3 md:mb-0">
@@ -456,7 +456,7 @@ function App() {
                   <div className="text-white text-sm md:text-lg mb-3">暂无庄家</div>
                   <button
                     onClick={handleApplyDealer}
-                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+                    className="px-6 py-3 bg-green-600 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
                   >
                     申请坐庄
                   </button>
@@ -504,14 +504,14 @@ function App() {
               {owner === player.id && (
                 <button
                   onClick={() => socket.emit('startGame')}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
+                  className="px-6 py-3 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
                 >
                   开始游戏
                 </button>
               )}
               <button
                 onClick={handleCopyRoomId}
-                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
+                className="px-6 py-3 bg-purple-600 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
               >
                 复制房间号
               </button>
@@ -523,7 +523,7 @@ function App() {
     
     // 游戏进行中界面
     return (
-      <div className="min-h-screen p-4 bg-gradient-to-br from-green-900 to-green-800">
+      <div className="min-h-screen p-4 bg-green-900 bg-gradient-to-br from-green-900 to-green-800">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 fade-in">
             <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 mb-4 md:mb-0">游戏房间 {currentRoom}</h2>
@@ -711,7 +711,7 @@ function App() {
               <div className="mt-6 text-center">
                 <button
                   onClick={handleRestartGame}
-                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
+                  className="px-6 py-3 bg-green-600 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
                 >
                   下一局
                 </button>
@@ -748,13 +748,13 @@ function App() {
                             <div className="flex gap-3 flex-wrap justify-center mb-6">
                               <button 
                                 onClick={() => handlePlayerAction('hit', 0)}
-                                className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-green-600 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第一手牌要牌
                               </button>
                               <button 
                                 onClick={() => handlePlayerAction('stand', 0)}
-                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第一手牌停牌
                               </button>
@@ -779,13 +779,13 @@ function App() {
                             <div className="flex gap-3 flex-wrap justify-center mb-6">
                               <button 
                                 onClick={() => handlePlayerAction('hit', 1)}
-                                className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-green-600 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第二手牌要牌
                               </button>
                               <button 
                                 onClick={() => handlePlayerAction('stand', 1)}
-                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第二手牌停牌
                               </button>
@@ -818,13 +818,13 @@ function App() {
                           <div className="flex gap-3 flex-wrap justify-center">
                             <button 
                               onClick={() => handlePlayerAction('hit')}
-                              className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                              className="px-4 py-2 bg-green-600 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                             >
                               要牌
                             </button>
                             <button 
                               onClick={() => handlePlayerAction('stand')}
-                              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                              className="px-4 py-2 bg-blue-600 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                             >
                               停牌
                             </button>
@@ -832,7 +832,7 @@ function App() {
                             {mainPlayer?.hand?.length === 2 && (
                               <button 
                                 onClick={() => handlePlayerAction('double')}
-                                className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-yellow-600 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 加倍
                               </button>
@@ -859,7 +859,7 @@ function App() {
                             })() ? (
                               <button 
                                 onClick={() => handlePlayerAction('split')}
-                                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-purple-600 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 分牌
                               </button>
@@ -868,7 +868,7 @@ function App() {
                             {mainPlayer?.hand?.length === 2 && (
                               <button 
                                 onClick={() => handlePlayerAction('surrender')}
-                                className="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                                className="px-4 py-2 bg-gray-600 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 投降
                               </button>
