@@ -217,7 +217,7 @@ io.on('connection', (socket) => {
   });
   
   // 开始游戏
-  function startGame(roomId) {
+  function startGameLogic(roomId) {
     const room = rooms[roomId];
     room.gameState = 'playing';
     
@@ -300,34 +300,65 @@ io.on('connection', (socket) => {
 
   // 手动开始游戏
   socket.on('startGame', () => {
+    console.log('收到开始游戏请求');
     const playerId = socket.id;
     const playerInfo = players[playerId];
     
     if (playerInfo) {
       const roomId = playerInfo.roomId;
       const room = rooms[roomId];
+      console.log('房间信息:', roomId, room.players.length, room.dealer);
       
       // 检查是否是房主
       if (room.owner !== playerId) {
+        console.log('不是房主');
         socket.emit('error', '只有房主可以开始游戏');
         return;
       }
       
-      // 检查是否所有玩家都已准备
+      // 检查是否有庄家，如果没有庄家，自动创建系统庄家
+      if (!room.dealer) {
+        console.log('创建系统庄家');
+        // 创建系统庄家
+        const systemDealerId = 'system_dealer_' + roomId;
+        const systemDealer = {
+          id: systemDealerId,
+          name: '系统庄家',
+          score: 100000, // 系统庄家积分
+          hand: [],
+          value: 0,
+          status: 'waiting',
+          bet: 0,
+          ready: true
+        };
+        
+        room.players.push(systemDealer);
+        room.dealer = systemDealerId;
+        
+        // 通知客户端系统庄家已添加
+        io.to(roomId).emit('playerJoined', { player: systemDealer });
+        io.to(roomId).emit('dealerUpdated', { dealer: systemDealerId });
+        console.log('系统庄家创建成功');
+      }
+      
+      // 确保所有玩家都已准备（包括系统庄家）
+      room.players.forEach(player => {
+        if (player.id === room.dealer) {
+          player.ready = true;
+        }
+      });
+      
+      // 再次检查是否所有玩家都已准备
       const allReady = room.players.every(player => player.ready);
+      console.log('所有玩家准备状态:', allReady, room.players.map(p => ({name: p.name, ready: p.ready})));
       if (!allReady) {
         socket.emit('error', '所有玩家必须准备就绪才能开始游戏');
         return;
       }
       
-      // 检查是否有庄家
-      if (!room.dealer) {
-        socket.emit('error', '必须有玩家申请坐庄才能开始游戏');
-        return;
-      }
-      
       if (room && room.gameState === 'waiting' && room.players.length > 0) {
-        startGame(roomId);
+        console.log('开始游戏');
+        startGameLogic(roomId);
       }
     }
   });

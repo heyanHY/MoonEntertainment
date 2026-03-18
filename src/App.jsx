@@ -284,54 +284,54 @@ function App() {
   if (page === 'home') {
     return (
       <div className="min-h-screen p-4 flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900">
-        <div className="container mx-auto">
+        <div className="container mx-auto w-full max-w-sm">
           <div className="flex flex-col items-center justify-center min-h-[80vh] fade-in">
-            <div className="flex items-center mb-16">
-              <div className="text-7xl mr-4 text-yellow-300 animate-pulse">🌙</div>
-              <h1 className="text-6xl font-bold text-yellow-300 drop-shadow-lg">月亮娱乐</h1>
+            <div className="flex items-center mb-12">
+              <div className="text-5xl md:text-7xl mr-3 text-yellow-300 animate-pulse">🌙</div>
+              <h1 className="text-3xl md:text-6xl font-bold text-yellow-300 drop-shadow-lg">月亮娱乐</h1>
             </div>
             {error && (
-              <div className="bg-red-500 text-white p-4 rounded-lg mb-8 w-full max-w-md shadow-lg">
+              <div className="bg-red-500 text-white p-4 rounded-lg mb-6 w-full shadow-lg">
                 {error}
               </div>
             )}
-            <div className="w-full max-w-md mb-10">
+            <div className="w-full mb-8 flex justify-center px-4">
               <input
                 type="text"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
-                className="w-full px-6 py-5 bg-white border border-yellow-500 rounded-full text-black text-xl placeholder-gray-500 text-center focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
+                className="w-full max-w-xs px-4 py-4 bg-white border border-yellow-500 rounded-full text-black text-lg md:text-xl placeholder-gray-500 text-center focus:outline-none focus:ring-2 focus:ring-yellow-500 transition-all"
                 placeholder="请输入你的昵称"
               />
             </div>
             <button
               onClick={handleEnterGame}
-              className="px-12 py-4 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 mb-16"
+              className="px-10 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 mb-12 w-full max-w-xs"
             >
               进入游戏
             </button>
-            <div className="mt-8 w-full max-w-md bg-gradient-to-br from-purple-800 to-indigo-900 p-8 rounded-xl border border-purple-600 shadow-2xl">
-              <h3 className="text-2xl font-bold text-yellow-300 text-center mb-6">游戏规则</h3>
-              <ul className="text-left space-y-4">
+            <div className="mt-6 w-full bg-gradient-to-br from-purple-800 to-indigo-900 p-4 md:p-8 rounded-xl border border-purple-600 shadow-2xl">
+              <h3 className="text-lg md:text-2xl font-bold text-yellow-300 text-center mb-3 md:mb-6">游戏规则</h3>
+              <ul className="text-left space-y-2 md:space-y-4">
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-3 text-lg">•</span>
-                  <span className="text-gray-200">4副牌，支持最多6人同时游戏</span>
+                  <span className="text-yellow-400 mr-2 text-lg">•</span>
+                  <span className="text-gray-200 text-sm md:text-base">4副牌，支持最多6人同时游戏</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-3 text-lg">•</span>
-                  <span className="text-gray-200">初始每人10000积分，最低下注100</span>
+                  <span className="text-yellow-400 mr-2 text-lg">•</span>
+                  <span className="text-gray-200 text-sm md:text-base">初始每人10000积分，最低下注100</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-3 text-lg">•</span>
-                  <span className="text-gray-200">玩家可申请坐庄，轮流坐庄</span>
+                  <span className="text-yellow-400 mr-2 text-lg">•</span>
+                  <span className="text-gray-200 text-sm md:text-base">玩家可申请坐庄，轮流坐庄</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-3 text-lg">•</span>
-                  <span className="text-gray-200">21点最大，超过21点爆牌输</span>
+                  <span className="text-yellow-400 mr-2 text-lg">•</span>
+                  <span className="text-gray-200 text-sm md:text-base">21点最大，超过21点爆牌输</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-yellow-400 mr-3 text-lg">•</span>
-                  <span className="text-gray-200">庄家小于17点必须要牌</span>
+                  <span className="text-yellow-400 mr-2 text-lg">•</span>
+                  <span className="text-gray-200 text-sm md:text-base">庄家小于17点必须要牌</span>
                 </li>
               </ul>
             </div>
@@ -343,61 +343,61 @@ function App() {
 
   if (page === 'lobby') {
     return (
-      <div className="min-h-screen p-4">
+      <div className="min-h-screen p-4 bg-gradient-to-br from-green-900 to-green-800">
         <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 fade-in">
-            <h2 className="section-title mb-4 md:mb-0">游戏大厅</h2>
-            <div className="bg-gradient-to-r from-green-800 to-green-900 p-4 rounded-lg border border-green-600 shadow-lg">
-              <div className="text-white font-medium">{player.name}</div>
-              <div className="text-yellow-400 font-bold">积分: {player.score}</div>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 fade-in">
+            <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 mb-4 md:mb-0">游戏大厅</h2>
+            <div className="bg-gradient-to-r from-green-800 to-green-900 p-3 md:p-4 rounded-lg border border-green-600 shadow-lg">
+              <div className="text-white font-medium text-sm md:text-base">{player.name}</div>
+              <div className="text-yellow-400 font-bold text-sm md:text-base">积分: {player.score}</div>
             </div>
           </div>
-          <hr className="border-green-600 mb-8" />
-          <div className="flex flex-wrap gap-4 mb-12 justify-center">
+          <hr className="border-green-600 mb-6" />
+          <div className="flex flex-col gap-3 mb-8 items-center">
             <button
               onClick={handleCreateRoom}
-              className="btn-primary"
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full max-w-xs"
             >
               创建房间
             </button>
-            <div className="w-full md:w-auto">
+            <div className="w-full max-w-xs flex justify-center">
               <input
                 type="text"
                 value={roomId}
                 onChange={(e) => setRoomId(e.target.value)}
-                className="input-field md:w-64"
+                className="w-full px-4 py-3 bg-white bg-opacity-10 border border-green-500 rounded-full text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-center"
                 placeholder="输入6位房间号"
                 maxLength={6}
               />
             </div>
             <button
               onClick={handleJoinRoom}
-              className="btn-secondary"
+              className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full max-w-xs"
             >
               加入房间
             </button>
           </div>
-          <div className="mb-8">
-            <h3 className="section-title">公开房间</h3>
+          <div className="mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-yellow-400 mb-4">公开房间</h3>
             {rooms.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rooms.map((room) => (
-                  <div key={room.id} className="room-card fade-in">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="font-bold text-yellow-400 text-lg">房间 {room.id}</span>
-                      <span className="text-sm bg-green-700 px-3 py-1 rounded-full">{room.players.length}/6</span>
+                  <div key={room.id} className="bg-gradient-to-br from-green-800 to-green-900 p-4 rounded-lg border border-green-600 shadow-lg fade-in">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="font-bold text-yellow-400 text-sm md:text-lg">房间 {room.id}</span>
+                      <span className="text-xs md:text-sm bg-green-700 px-2 py-1 rounded-full">{room.players.length}/6</span>
                     </div>
-                    <div className="text-sm mb-6 space-y-2">
+                    <div className="text-xs md:text-sm mb-4 space-y-1">
                       {room.players.map((player, index) => (
                         <div key={index} className="flex items-center text-white">
-                          <span className="text-yellow-400 mr-2">👤</span>
+                          <span className="text-yellow-400 mr-1">👤</span>
                           {player.name}
                         </div>
                       ))}
                     </div>
                     <button
                       onClick={() => handleJoinExistingRoom(room.id)}
-                      className="w-full btn-accent"
+                      className="w-full px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                     >
                       加入
                     </button>
@@ -405,9 +405,9 @@ function App() {
                 ))}
               </div>
             ) : (
-              <div className="bg-gradient-to-br from-green-800 to-green-900 p-12 rounded-lg border border-green-600 shadow-xl text-center">
-                <div className="text-4xl mb-4">🎲</div>
-                <div className="text-gray-300 text-lg">暂无公开房间，创建一个吧！</div>
+              <div className="bg-gradient-to-br from-green-800 to-green-900 p-8 rounded-lg border border-green-600 shadow-xl text-center">
+                <div className="text-3xl mb-3">🎲</div>
+                <div className="text-gray-300 text-sm md:text-lg">暂无公开房间，创建一个吧！</div>
               </div>
             )}
           </div>
@@ -420,43 +420,43 @@ function App() {
     // 游戏准备界面
     if (!game || game.gameState === 'waiting') {
       return (
-        <div className="min-h-screen p-4 bg-gradient-to-br from-green-800 to-green-900">
+        <div className="min-h-screen p-4 bg-gradient-to-br from-green-900 to-green-800">
           <div className="container mx-auto">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-yellow-400">房间号: {currentRoom}</h2>
-                <div className="text-white">玩家: {players.length}/6</div>
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+              <div className="mb-3 md:mb-0">
+                <h2 className="text-xl md:text-2xl font-bold text-yellow-400">房间号: {currentRoom}</h2>
+                <div className="text-white text-sm md:text-base">玩家: {players.length}/6</div>
               </div>
               <button
                 onClick={handleLeaveRoom}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-full"
+                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-full text-sm"
               >
                 离开房间
               </button>
             </div>
-            <hr className="border-green-600 mb-8" />
+            <hr className="border-green-600 mb-6" />
             
             {/* 当前庄家 */}
-            <div className="game-section">
-              <h3 className="section-title text-center">当前庄家</h3>
+            <div className="mb-6">
+              <h3 className="text-xl md:text-2xl font-bold text-yellow-400 text-center mb-4">当前庄家</h3>
               {dealer ? (
-                <div className="flex flex-col items-center py-6">
-                  <div className="w-20 h-20 rounded-full bg-red-500 flex items-center justify-center text-white text-2xl font-bold mb-4">
+                <div className="flex flex-col items-center py-4">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-red-500 flex items-center justify-center text-white text-xl md:text-2xl font-bold mb-3">
                     {players.find(p => p.id === dealer)?.name.charAt(0) || '?'}
                   </div>
-                  <div className="text-white text-lg">
+                  <div className="text-white text-sm md:text-lg">
                     {players.find(p => p.id === dealer)?.name || '未知'}
                   </div>
-                  <div className="text-yellow-400">
+                  <div className="text-yellow-400 text-sm">
                     积分: {players.find(p => p.id === dealer)?.score || 0}
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="text-white text-lg mb-4">暂无庄家</div>
+                <div className="text-center py-6">
+                  <div className="text-white text-sm md:text-lg mb-3">暂无庄家</div>
                   <button
                     onClick={handleApplyDealer}
-                    className="btn-primary"
+                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
                   >
                     申请坐庄
                   </button>
@@ -465,30 +465,30 @@ function App() {
             </div>
             
             {/* 玩家列表 */}
-            <div className="game-section mt-6">
-              <h3 className="section-title">玩家列表</h3>
-              <div className="space-y-4">
+            <div className="mb-6">
+              <h3 className="text-xl md:text-2xl font-bold text-yellow-400 mb-4">玩家列表</h3>
+              <div className="space-y-3">
                 {players.map((gamePlayer) => (
-                  <div key={gamePlayer.id} className="bg-green-900 p-4 rounded-lg border border-green-700 shadow-md flex justify-between items-center">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mr-3">
+                  <div key={gamePlayer.id} className="bg-gradient-to-br from-green-800 to-green-900 p-3 rounded-lg border border-green-600 shadow-md flex flex-col md:flex-row justify-between items-center">
+                    <div className="flex items-center mb-2 md:mb-0">
+                      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mr-2 md:mr-3">
                         {gamePlayer.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="text-white font-bold">{gamePlayer.name} {gamePlayer.id === player.id && '(你)'}{gamePlayer.id === dealer && ' (庄家)'}</div>
-                        <div className="text-yellow-400 text-sm">积分: {gamePlayer.score}</div>
+                        <div className="text-white font-bold text-sm md:text-base">{gamePlayer.name} {gamePlayer.id === player.id && '(你)'}{gamePlayer.id === dealer && ' (庄家)'}</div>
+                        <div className="text-yellow-400 text-xs md:text-sm">积分: {gamePlayer.score}</div>
                       </div>
                     </div>
                     <div className="flex items-center">
                       {gamePlayer.ready ? (
-                        <span className="text-green-400 font-medium mr-4">已准备</span>
+                        <span className="text-green-400 font-medium mr-2 md:mr-4 text-sm">已准备</span>
                       ) : (
-                        <span className="text-gray-400 font-medium mr-4">未准备</span>
+                        <span className="text-gray-400 font-medium mr-2 md:mr-4 text-sm">未准备</span>
                       )}
                       {gamePlayer.id === player.id && (
                         <button
                           onClick={handleReadyGame}
-                          className={`px-4 py-2 rounded-full ${gamePlayer.ready ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white font-bold`}
+                          className={`px-3 py-1 rounded-full text-sm ${gamePlayer.ready ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white font-bold`}
                         >
                           {gamePlayer.ready ? '取消准备' : '准备游戏'}
                         </button>
@@ -500,18 +500,18 @@ function App() {
             </div>
             
             {/* 操作按钮 */}
-            <div className="flex flex-wrap gap-4 justify-center mt-8">
+            <div className="flex flex-wrap gap-3 justify-center mt-6">
               {owner === player.id && (
                 <button
                   onClick={() => socket.emit('startGame')}
-                  className="btn-secondary"
+                  className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
                 >
                   开始游戏
                 </button>
               )}
               <button
                 onClick={handleCopyRoomId}
-                className="btn-accent"
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
               >
                 复制房间号
               </button>
@@ -523,38 +523,38 @@ function App() {
     
     // 游戏进行中界面
     return (
-      <div className="min-h-screen p-4">
+      <div className="min-h-screen p-4 bg-gradient-to-br from-green-900 to-green-800">
         <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 fade-in">
-            <h2 className="section-title mb-4 md:mb-0">游戏房间 {currentRoom}</h2>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 fade-in">
+            <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 mb-4 md:mb-0">游戏房间 {currentRoom}</h2>
+            <div className="flex flex-col md:flex-row items-center gap-3">
               <button
                 onClick={handleLeaveRoom}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-full"
+                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-full text-sm w-full md:w-auto"
               >
                 返回房间
               </button>
-              <div className="bg-gradient-to-r from-green-800 to-green-900 p-4 rounded-lg border border-green-600 shadow-lg">
-                <div className="text-white font-medium">{player.name}</div>
-                <div className="text-yellow-400 font-bold">积分: {player.score}</div>
+              <div className="bg-gradient-to-r from-green-800 to-green-900 p-3 rounded-lg border border-green-600 shadow-lg">
+                <div className="text-white font-medium text-sm">{player.name}</div>
+                <div className="text-yellow-400 font-bold text-sm">积分: {player.score}</div>
               </div>
             </div>
           </div>
-          <hr className="border-green-600 mb-8" />
+          <hr className="border-green-600 mb-6" />
           
           {/* 庄家区域 */}
-          <div className="game-section">
-            <h3 className="section-title">庄家 ({players.find(p => p.id === dealer)?.name || '未知'})</h3>
-            <div className="flex gap-4 mb-4">
+          <div className="mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-yellow-400 mb-4">庄家 ({players.find(p => p.id === dealer)?.name || '未知'})</h3>
+            <div className="flex gap-3 mb-3">
               {/* 庄家手牌 */}
-              <div className="flex gap-3">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {game?.dealerHand?.map((card, index) => (
-                  <div key={index} className={`${card.suit === '?' ? 'card-back' : 'card'}`}>
+                  <div key={index} className={`${card.suit === '?' ? 'card-back' : 'card'} min-w-[80px]`}>
                     {card.suit === '?' ? (
-                      <div className="text-2xl">🂠</div>
+                      <div className="text-xl md:text-2xl">🂠</div>
                     ) : (
                       <>
-                        <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                        <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                         <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                       </>
                     )}
@@ -568,8 +568,8 @@ function App() {
           </div>
           
           {/* 玩家区域 */}
-          <div className="game-section">
-            <h3 className="section-title">{player.name}</h3>
+          <div className="mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-yellow-400 mb-4">{player.name}</h3>
             
             {/* 下注区域 */}
             {game && game.gameState === 'waiting' && (
@@ -580,7 +580,7 @@ function App() {
                     <button
                       key={amount}
                       onClick={() => handleBet(amount)}
-                      className={`px-4 py-2 rounded-full ${betAmount === amount ? 'bg-yellow-500 text-white' : 'bg-green-700 hover:bg-green-600 text-white'}`}
+                      className={`px-4 py-2 rounded-full text-sm ${betAmount === amount ? 'bg-yellow-500 text-white' : 'bg-green-700 hover:bg-green-600 text-white'}`}
                     >
                       {amount} 积分
                     </button>
@@ -606,10 +606,10 @@ function App() {
                       <>
                         <div className="mb-6">
                           <h4 className="text-lg font-medium text-white mb-3">第一手牌</h4>
-                          <div className="flex gap-3 mb-3">
+                          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
                             {mainPlayer?.hand?.map((card, index) => (
-                              <div key={index} className="card">
-                                <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                              <div key={index} className="card min-w-[80px]">
+                                <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                                 <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                               </div>
                             ))}
@@ -626,10 +626,10 @@ function App() {
                         </div>
                         <div className="mb-6">
                           <h4 className="text-lg font-medium text-white mb-3">第二手牌</h4>
-                          <div className="flex gap-3 mb-3">
+                          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
                             {splitPlayer?.hand?.map((card, index) => (
-                              <div key={index} className="card">
-                                <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                              <div key={index} className="card min-w-[80px]">
+                                <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                                 <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                               </div>
                             ))}
@@ -650,12 +650,12 @@ function App() {
                     // 未分牌时显示一手牌结果
                     return (
                       <>
-                        <div className="flex gap-4 mb-6">
+                        <div className="flex gap-3 mb-6">
                           {/* 玩家手牌 */}
-                          <div className="flex gap-3">
+                          <div className="flex gap-2 overflow-x-auto pb-2">
                             {mainPlayer?.hand?.map((card, index) => (
-                              <div key={index} className="card">
-                                <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                              <div key={index} className="card min-w-[80px]">
+                                <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                                 <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                               </div>
                             ))}
@@ -681,7 +681,7 @@ function App() {
             
             {/* 游戏结束时庄家的显示 */}
             {game?.gameState === 'ended' && player.id === dealer && (
-              <div className="text-center py-8">
+              <div className="text-center py-6">
                 <div className="text-yellow-400 text-xl font-bold mb-2">您是庄家</div>
                 <div className={`text-center text-2xl font-bold ${game?.players?.find(p => p.id === player.id)?.result === 'win' ? 'text-green-400' : game?.players?.find(p => p.id === player.id)?.result === 'lose' ? 'text-red-400' : 'text-yellow-400'}`}>
                   {game?.players?.find(p => p.id === player.id)?.result === 'win' ? '胜利！' : game?.players?.find(p => p.id === player.id)?.result === 'lose' ? '失败！' : '平局！'}
@@ -711,7 +711,7 @@ function App() {
               <div className="mt-6 text-center">
                 <button
                   onClick={handleRestartGame}
-                  className="btn-primary"
+                  className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all w-full md:w-auto"
                 >
                   下一局
                 </button>
@@ -732,10 +732,10 @@ function App() {
                       <>
                         <div className="mb-6">
                           <h4 className="text-lg font-medium text-white mb-3">第一手牌</h4>
-                          <div className="flex gap-3 mb-3">
+                          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
                             {mainPlayer?.hand?.map((card, index) => (
-                              <div key={index} className="card">
-                                <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                              <div key={index} className="card min-w-[80px]">
+                                <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                                 <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                               </div>
                             ))}
@@ -745,16 +745,16 @@ function App() {
                           </div>
                           {/* 第一手牌的操作按钮 */}
                           {mainPlayer?.status === 'playing' && (
-                            <div className="flex gap-4 flex-wrap justify-center mb-6">
+                            <div className="flex gap-3 flex-wrap justify-center mb-6">
                               <button 
                                 onClick={() => handlePlayerAction('hit', 0)}
-                                className="btn-accent"
+                                className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第一手牌要牌
                               </button>
                               <button 
                                 onClick={() => handlePlayerAction('stand', 0)}
-                                className="btn-secondary"
+                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第一手牌停牌
                               </button>
@@ -763,10 +763,10 @@ function App() {
                         </div>
                         <div className="mb-6">
                           <h4 className="text-lg font-medium text-white mb-3">第二手牌</h4>
-                          <div className="flex gap-3 mb-3">
+                          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
                             {splitPlayer?.hand?.map((card, index) => (
-                              <div key={index} className="card">
-                                <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                              <div key={index} className="card min-w-[80px]">
+                                <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                                 <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                               </div>
                             ))}
@@ -776,16 +776,16 @@ function App() {
                           </div>
                           {/* 第二手牌的操作按钮 */}
                           {splitPlayer?.status === 'playing' && (
-                            <div className="flex gap-4 flex-wrap justify-center mb-6">
+                            <div className="flex gap-3 flex-wrap justify-center mb-6">
                               <button 
                                 onClick={() => handlePlayerAction('hit', 1)}
-                                className="btn-accent"
+                                className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第二手牌要牌
                               </button>
                               <button 
                                 onClick={() => handlePlayerAction('stand', 1)}
-                                className="btn-secondary"
+                                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 第二手牌停牌
                               </button>
@@ -798,12 +798,12 @@ function App() {
                     // 未分牌时显示一手牌
                     return (
                       <>
-                        <div className="flex gap-4 mb-6">
+                        <div className="flex gap-3 mb-6">
                           {/* 玩家手牌 */}
-                          <div className="flex gap-3">
+                          <div className="flex gap-2 overflow-x-auto pb-2">
                             {mainPlayer?.hand?.map((card, index) => (
-                              <div key={index} className="card">
-                                <div className={`text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
+                              <div key={index} className="card min-w-[80px]">
+                                <div className={`text-xl md:text-2xl ${['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}`}>{card.suit}</div>
                                 <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                               </div>
                             ))}
@@ -815,16 +815,16 @@ function App() {
                         
                         {/* 游戏进行中显示操作按钮 */}
                         {game?.gameState === 'playing' && mainPlayer?.status === 'playing' && (
-                          <div className="flex gap-4 flex-wrap justify-center">
+                          <div className="flex gap-3 flex-wrap justify-center">
                             <button 
                               onClick={() => handlePlayerAction('hit')}
-                              className="btn-accent"
+                              className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                             >
                               要牌
                             </button>
                             <button 
                               onClick={() => handlePlayerAction('stand')}
-                              className="btn-secondary"
+                              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                             >
                               停牌
                             </button>
@@ -832,7 +832,7 @@ function App() {
                             {mainPlayer?.hand?.length === 2 && (
                               <button 
                                 onClick={() => handlePlayerAction('double')}
-                                className="btn-primary"
+                                className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 加倍
                               </button>
@@ -859,7 +859,7 @@ function App() {
                             })() ? (
                               <button 
                                 onClick={() => handlePlayerAction('split')}
-                                className="btn-accent"
+                                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 分牌
                               </button>
@@ -868,7 +868,7 @@ function App() {
                             {mainPlayer?.hand?.length === 2 && (
                               <button 
                                 onClick={() => handlePlayerAction('surrender')}
-                                className="btn-secondary"
+                                className="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
                               >
                                 投降
                               </button>
@@ -884,7 +884,7 @@ function App() {
             
             {/* 如果玩家是庄家，显示庄家提示 */}
             {player.id === dealer && game?.gameState !== 'ended' && (
-              <div className="text-center py-8">
+              <div className="text-center py-6">
                 <div className="text-yellow-400 text-xl font-bold mb-2">您是庄家</div>
                 <div className="text-white">庄家的操作将在所有玩家行动后自动进行</div>
               </div>
@@ -892,15 +892,15 @@ function App() {
           </div>
           
           {/* 其他玩家 */}
-          <div className="game-section">
-            <h3 className="section-title">其他玩家</h3>
+          <div className="mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-yellow-400 mb-4">其他玩家</h3>
             {players.filter(p => p.id !== player.id && p.id !== dealer).length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {players.filter(p => p.id !== player.id && p.id !== dealer).map((otherPlayer) => (
-                  <div key={otherPlayer.id} className="bg-green-900 p-4 rounded-lg border border-green-700 shadow-md">
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="font-bold text-white">{otherPlayer.name}</span>
-                      <div className="flex items-center gap-4">
+                  <div key={otherPlayer.id} className="bg-gradient-to-br from-green-800 to-green-900 p-3 rounded-lg border border-green-600 shadow-md">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
+                      <span className="font-bold text-white mb-2 md:mb-0">{otherPlayer.name}</span>
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className={`text-sm font-medium ${otherPlayer.status === 'playing' ? 'text-blue-400' : otherPlayer.status === 'stood' ? 'text-green-400' : otherPlayer.status === 'busted' ? 'text-red-400' : 'text-gray-400'}`}>
                           {otherPlayer.status === 'playing' ? '正在要牌' : otherPlayer.status === 'stood' ? '已停牌' : otherPlayer.status === 'busted' ? '已爆牌' : '等待中'}
                         </span>
@@ -909,12 +909,12 @@ function App() {
                             {otherPlayer.result === 'win' ? '胜利' : otherPlayer.result === 'lose' ? '失败' : '平局'}
                           </span>
                         )}
-                        <span className="text-yellow-400 font-medium">积分: {otherPlayer.score}</span>
+                        <span className="text-yellow-400 font-medium text-sm">积分: {otherPlayer.score}</span>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 overflow-x-auto pb-2">
                       {otherPlayer.hand.map((card, index) => (
-                        <div key={index} className="card" style={{ minWidth: '70px', padding: '8px' }}>
+                        <div key={index} className="card" style={{ minWidth: '60px', padding: '6px' }}>
                           <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.suit}</div>
                           <div className={['♥', '♦'].includes(card.suit) ? 'text-red-500' : 'text-black'}>{card.value}</div>
                         </div>
@@ -927,7 +927,7 @@ function App() {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-gray-300 py-8">
+              <div className="text-center text-gray-300 py-6">
                 暂无其他玩家
               </div>
             )}
