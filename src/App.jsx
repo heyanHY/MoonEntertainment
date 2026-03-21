@@ -18,6 +18,44 @@ function App() {
   const [dealer, setDealer] = useState(null);
   const [players, setPlayers] = useState([]);
   const [lastScore, setLastScore] = useState(10000); // 上一局结束时的积分
+  const [settingsOpen, setSettingsOpen] = useState(false); // 设置菜单是否打开
+  const [musicEnabled, setMusicEnabled] = useState(true); // 背景音乐是否开启
+  const [currentMusicStyle, setCurrentMusicStyle] = useState(0); // 当前音乐风格索引
+  const musicStyles = [
+    '轻松愉快',
+    '紧张刺激',
+    '神秘悬疑',
+    '古典优雅',
+    '现代流行'
+  ]; // 音乐风格列表
+
+  // 背景音乐管理
+  useEffect(() => {
+    let audio = null;
+    
+    // 模拟不同风格的背景音乐URL
+    const musicUrls = [
+      'https://example.com/music1.mp3', // 轻松愉快
+      'https://example.com/music2.mp3', // 紧张刺激
+      'https://example.com/music3.mp3', // 神秘悬疑
+      'https://example.com/music4.mp3', // 古典优雅
+      'https://example.com/music5.mp3'  // 现代流行
+    ];
+    
+    if (musicEnabled) {
+      audio = new Audio(musicUrls[currentMusicStyle]);
+      audio.loop = true;
+      audio.volume = 0.5;
+      audio.play().catch(e => console.log('无法播放背景音乐:', e));
+    }
+    
+    return () => {
+      if (audio) {
+        audio.pause();
+        audio = null;
+      }
+    };
+  }, [musicEnabled, currentMusicStyle]);
 
   useEffect(() => {
     // 开发环境连接 localhost，生产环境生产环境连接 Railway 后端
@@ -352,11 +390,11 @@ function App() {
               <ul className="text-left space-y-2 md:space-y-4">
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2 text-lg">•</span>
-                  <span className="text-gray-200 text-sm md:text-base">4副牌，支持最多6人同时游戏</span>
+                  <span className="text-gray-200 text-sm md:text-base">8副牌，支持最多6人同时游戏</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2 text-lg">•</span>
-                  <span className="text-gray-200 text-sm md:text-base">初始每人10000积分，最低下注100</span>
+                  <span className="text-gray-200 text-sm md:text-base">初始每人10000积分，最低下注200</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-yellow-400 mr-2 text-lg">•</span>
@@ -384,9 +422,41 @@ function App() {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 fade-in">
             <h2 className="text-2xl md:text-3xl font-bold text-yellow-400 mb-4 md:mb-0">游戏大厅</h2>
-            <div className="bg-gradient-to-r from-green-800 to-green-900 p-3 md:p-4 rounded-lg border border-green-600 shadow-lg">
-              <div className="text-white font-medium text-sm md:text-base">{player.name}</div>
-              <div className="text-yellow-400 font-bold text-sm md:text-base">积分: {player.score}</div>
+            <div className="relative">
+              <div className="bg-gradient-to-r from-green-800 to-green-900 p-3 md:p-4 rounded-lg border border-green-600 shadow-lg flex items-center justify-between">
+                <div>
+                  <div className="text-white font-medium text-sm md:text-base">{player.name}</div>
+                  <div className="text-yellow-400 font-bold text-sm md:text-base">积分: {player.score}</div>
+                </div>
+                <button
+                  onClick={() => setSettingsOpen(!settingsOpen)}
+                  className="ml-4 text-white hover:text-yellow-400 transition-colors bg-transparent border-none focus:outline-none text-xl"
+                >
+                  ⚙️
+                </button>
+              </div>
+              {settingsOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-green-800 rounded-lg shadow-lg border border-green-600 py-2 z-10">
+                  <div className="px-4 py-2 flex justify-between items-center">
+                    <span className="text-white text-sm">背景音乐</span>
+                    <button
+                      onClick={() => setMusicEnabled(!musicEnabled)}
+                      className={`px-3 py-1 rounded ${musicEnabled ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                    >
+                      {musicEnabled ? '开' : '关'}
+                    </button>
+                  </div>
+                  <div className="px-4 py-2 flex justify-between items-center">
+                    <span className="text-white text-sm">音乐风格</span>
+                    <button
+                      onClick={() => setCurrentMusicStyle((prev) => (prev + 1) % musicStyles.length)}
+                      className="px-3 py-1 bg-blue-600 text-white rounded"
+                    >
+                      {musicStyles[currentMusicStyle]}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <hr className="border-green-600 mb-6" />
@@ -468,9 +538,41 @@ function App() {
                 >
                   返回房间
                 </button>
-                <div className="bg-gradient-to-r from-green-800 to-green-900 p-3 rounded-lg border border-green-600 shadow-lg">
-                  <div className="text-white font-medium text-sm">{player.name}</div>
-                  <div className="text-yellow-400 font-bold text-sm">积分: {player.score}</div>
+                <div className="relative">
+                  <div className="bg-gradient-to-r from-green-800 to-green-900 p-3 rounded-lg border border-green-600 shadow-lg flex items-center justify-between">
+                    <div>
+                      <div className="text-white font-medium text-sm">{player.name}</div>
+                      <div className="text-yellow-400 font-bold text-sm">积分: {player.score}</div>
+                    </div>
+                    <button
+                      onClick={() => setSettingsOpen(!settingsOpen)}
+                      className="ml-4 text-white hover:text-yellow-400 transition-colors bg-transparent border-none focus:outline-none text-xl"
+                    >
+                      ⚙️
+                    </button>
+                  </div>
+                  {settingsOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-green-800 rounded-lg shadow-lg border border-green-600 py-2 z-10">
+                      <div className="px-4 py-2 flex justify-between items-center">
+                        <span className="text-white text-sm">背景音乐</span>
+                        <button
+                          onClick={() => setMusicEnabled(!musicEnabled)}
+                          className={`px-3 py-1 rounded ${musicEnabled ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'}`}
+                        >
+                          {musicEnabled ? '开' : '关'}
+                        </button>
+                      </div>
+                      <div className="px-4 py-2 flex justify-between items-center">
+                        <span className="text-white text-sm">音乐风格</span>
+                        <button
+                          onClick={() => setCurrentMusicStyle((prev) => (prev + 1) % musicStyles.length)}
+                          className="px-3 py-1 bg-blue-600 text-white rounded"
+                        >
+                          {musicStyles[currentMusicStyle]}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -38,8 +38,8 @@ function generateDeck() {
   const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
   const deck = [];
   
-  // 生成4副牌
-  for (let i = 0; i < 4; i++) {
+  // 生成8副牌
+  for (let i = 0; i < 8; i++) {
     for (const suit of suits) {
       for (const value of values) {
         deck.push({ suit, value });
