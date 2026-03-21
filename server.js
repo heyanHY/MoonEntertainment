@@ -83,7 +83,25 @@ function calculateHandValue(hand) {
 
 // 获取公开房间列表
 function getPublicRooms() {
-  return Object.values(rooms).filter(room => room.gameState === 'waiting' && room.players.length > 0).map(room => ({
+  console.log('所有房间:', Object.values(rooms).map(room => ({id: room.id, gameState: room.gameState, playersLength: room.players.length})));
+  const filteredRooms = Object.values(rooms).filter(room => {
+    console.log('检查房间:', room.id, '游戏状态:', room.gameState, '玩家数量:', room.players.length);
+    // 检查游戏状态是否为等待中
+    if (room.gameState !== 'waiting') {
+      console.log('房间', room.id, '游戏状态不是等待中，过滤掉');
+      return false;
+    }
+    // 检查是否只有系统庄家
+    const onlySystemDealer = room.players.length === 1 && room.players[0].id.includes('system_dealer');
+    if (onlySystemDealer) {
+      console.log('房间', room.id, '只有系统庄家，过滤掉');
+      return false;
+    }
+    console.log('房间', room.id, '符合条件，保留');
+    return true;
+  });
+  console.log('过滤后的房间:', filteredRooms.map(room => ({id: room.id, gameState: room.gameState, playersLength: room.players.length})));
+  return filteredRooms.map(room => ({
     id: room.id,
     players: room.players
   }));
@@ -113,33 +131,15 @@ io.on('connection', (socket) => {
       owner: null
     };
     
-    socket.join(roomId);
+    console.log('创建房间:', roomId);
     
-    // 自动将创建者加入房间
-    const playerId = socket.id;
-    const player = {
-      id: playerId,
-      name: players[playerId]?.name || players[playerId]?.player?.name || `玩家1`,
-      score: players[playerId]?.score || players[playerId]?.player?.score || 10000,
-      hand: [],
-      value: 0,
-      status: 'waiting',
-      bet: 100,
-      ready: false
-    };
+    // 通知客户端房间创建成功
+    socket.emit('roomCreated', { roomId });
     
-    rooms[roomId].players.push(player);
-    rooms[roomId].owner = playerId; // 设置创建者为房主
-    players[playerId] = { roomId, player };
-    
-    socket.emit('joinedRoom', { 
-      roomId, 
-      player, 
-      players: rooms[roomId].players,
-      owner: playerId,
-      dealer: null
-    });
-    console.log('创建房间并加入:', roomId, playerId);
+    // 通知所有玩家更新公开房间列表
+    const publicRooms = getPublicRooms();
+    console.log('公开房间列表:', publicRooms);
+    io.emit('publicRooms', { rooms: publicRooms });
   });
   
   // 加入房间
@@ -168,12 +168,18 @@ io.on('connection', (socket) => {
         hand: [],
         value: 0,
         status: 'waiting',
-        bet: 100, // 初始下注
+        bet: 0, // 初始下注
         ready: false
       };
       
       room.players.push(player);
       players[playerId] = { roomId, player };
+      
+      // 如果房间还没有房主，设置当前玩家为房主
+      if (!room.owner) {
+        room.owner = playerId;
+        console.log('设置房主:', playerId, player.name);
+      }
       
       socket.join(roomId);
       socket.emit('joinedRoom', { 
@@ -181,6 +187,13 @@ io.on('connection', (socket) => {
         player, 
         players: room.players,
         owner: room.owner,
+        dealer: room.dealer
+      });
+      
+      // 发送游戏重置事件，设置游戏状态为 waiting，显示下注界面
+      socket.emit('gameReset', {
+        players: room.players,
+        gameState: 'waiting',
         dealer: room.dealer
       });
       io.to(roomId).emit('playerJoined', { player });
@@ -219,23 +232,33 @@ io.on('connection', (socket) => {
   // 开始游戏
   function startGameLogic(roomId) {
     const room = rooms[roomId];
+    console.log('开始游戏逻辑，当前游戏状态:', room.gameState);
     room.gameState = 'playing';
     
     // 发牌
     for (const player of room.players) {
-      player.hand = [room.deck.pop(), room.deck.pop()];
-      player.value = calculateHandValue(player.hand);
-      player.status = 'playing';
-      player.bet = 100; // 初始下注
+      if (player.id !== room.dealer && player.score > 0) {
+        console.log('给玩家发牌:', player.name, '下注金额:', player.bet);
+        player.hand = [room.deck.pop(), room.deck.pop()];
+        player.value = calculateHandValue(player.hand);
+        player.status = 'playing';
+        // 保留玩家的下注选择，不强制设置为100
+      } else if (player.id !== room.dealer && player.score <= 0) {
+        console.log('玩家积分不足，设为观众:', player.name);
+        player.hand = [];
+        player.value = 0;
+        player.status = 'spectator';
+        player.bet = 0;
+      }
     }
     
     // 发庄家牌
     room.dealerHand = [room.deck.pop(), room.deck.pop()];
     room.dealerValue = calculateHandValue(room.dealerHand);
     
-    // 跳过庄家，设置初始玩家索引
+    // 跳过庄家和积分不足的玩家，设置初始玩家索引
     room.currentPlayerIndex = 0;
-    while (room.currentPlayerIndex < room.players.length && room.players[room.currentPlayerIndex].id === room.dealer) {
+    while (room.currentPlayerIndex < room.players.length && (room.players[room.currentPlayerIndex].id === room.dealer || room.players[room.currentPlayerIndex].score <= 0)) {
       room.currentPlayerIndex++;
     }
     
@@ -258,9 +281,71 @@ io.on('connection', (socket) => {
       const room = rooms[roomId];
       const player = room.players.find(p => p.id === playerId);
       
+      console.log('收到下注请求:', player?.name, '金额:', amount, '游戏状态:', room?.gameState, '玩家积分:', player?.score);
+      
       if (player && room.gameState === 'waiting') {
-        player.bet = amount;
-        io.to(roomId).emit('playerUpdated', { player });
+        if (player.score >= amount) {
+          console.log('下注成功:', player.name, '金额:', amount);
+          player.bet = amount;
+          player.ready = true; // 确认下注后设置为已准备
+          io.to(roomId).emit('playerUpdated', { player });
+          
+          // 检查是否有庄家，如果没有庄家，自动创建系统庄家
+          if (!room.dealer) {
+            console.log('创建系统庄家');
+            // 创建系统庄家
+            const systemDealerId = 'system_dealer_' + roomId;
+            const systemDealer = {
+              id: systemDealerId,
+              name: '系统庄家',
+              score: 100000, // 系统庄家积分
+              hand: [],
+              value: 0,
+              status: 'waiting',
+              bet: 0,
+              ready: true
+            };
+            
+            room.players.push(systemDealer);
+            room.dealer = systemDealerId;
+            
+            // 通知客户端系统庄家已添加
+            io.to(roomId).emit('playerJoined', { player: systemDealer });
+            io.to(roomId).emit('dealerUpdated', { dealer: systemDealerId });
+            console.log('系统庄家创建成功');
+          }
+          
+          // 确保所有玩家都已准备（包括系统庄家和已下注的玩家）
+          room.players.forEach(player => {
+            if (player.id === room.dealer) {
+              player.ready = true;
+            } else if (player.bet > 0) {
+              // 已下注的玩家自动视为已准备
+              player.ready = true;
+              console.log('玩家', player.name, '已下注，自动设置为已准备');
+            }
+          });
+          
+          // 检查所有非庄家玩家是否都已准备就绪
+          const nonDealerPlayers = room.players.filter(p => p.id !== room.dealer && p.score >= 0);
+          const allReady = nonDealerPlayers.every(p => p.ready);
+          
+          // 确保至少有一个非庄家玩家，且所有非庄家玩家都已准备就绪
+          if (nonDealerPlayers.length > 0 && allReady) {
+            console.log('所有玩家都已准备就绪，自动开始游戏');
+            // 开始游戏
+            startGameLogic(roomId);
+          } else {
+            console.log('还有玩家未准备就绪，等待所有玩家下注');
+            // 通知所有玩家当前的准备状态
+            io.to(roomId).emit('playersUpdated', { players: room.players });
+          }
+        } else {
+          console.log('下注失败:', player.name, '积分不足');
+          socket.emit('error', '积分不足，无法下注');
+        }
+      } else {
+        console.log('下注失败:', player?.name, '游戏状态:', room?.gameState);
       }
     }
   });
@@ -341,18 +426,48 @@ io.on('connection', (socket) => {
         console.log('系统庄家创建成功');
       }
       
-      // 确保所有玩家都已准备（包括系统庄家）
+      // 确保所有玩家都已准备（包括系统庄家和已下注的玩家）
       room.players.forEach(player => {
         if (player.id === room.dealer) {
           player.ready = true;
+        } else if (player.bet > 0) {
+          // 已下注的玩家自动视为已准备
+          player.ready = true;
+          console.log('玩家', player.name, '已下注，自动设置为已准备');
         }
       });
       
       // 再次检查是否所有玩家都已准备
-      const allReady = room.players.every(player => player.ready);
-      console.log('所有玩家准备状态:', allReady, room.players.map(p => ({name: p.name, ready: p.ready})));
+      const allReady = room.players.every(player => {
+        if (player.id === room.dealer) {
+          return true; // 庄家自动视为已准备
+        } else if (player.bet > 0) {
+          return true; // 已下注的玩家自动视为已准备
+        } else if (player.score <= 0) {
+          return true; // 积分不足的玩家不参与游戏
+        } else {
+          return player.ready;
+        }
+      });
+      console.log('所有玩家准备状态:', allReady, room.players.map(p => ({name: p.name, ready: p.ready, bet: p.bet, score: p.score})));
       if (!allReady) {
         socket.emit('error', '所有玩家必须准备就绪才能开始游戏');
+        return;
+      }
+      
+      // 检查所有玩家是否都已下注，且积分足够
+      const allPlayersBet = room.players.every(player => {
+        if (player.id === room.dealer) {
+          return true; // 庄家不需要下注
+        }
+        if (player.score <= 0) {
+          return true; // 积分不足的玩家不参与游戏
+        }
+        return player.bet > 0;
+      });
+      console.log('所有玩家下注状态:', allPlayersBet, room.players.map(p => ({name: p.name, bet: p.bet, score: p.score})));
+      if (!allPlayersBet) {
+        socket.emit('error', '有玩家未下注，请先下注后再开始游戏');
         return;
       }
       
@@ -385,7 +500,7 @@ io.on('connection', (socket) => {
         player = room.players.find(p => p.id === playerId);
       }
       
-      if (player && player.status === 'playing') {
+      if (player && player.status === 'playing' && player.score > 0) {
         if (action === 'hit') {
           // 抽牌
           const card = room.deck.pop();
@@ -485,6 +600,21 @@ io.on('connection', (socket) => {
           player.score -= player.bet / 2; // 投降只输一半
           room.currentPlayerIndex++;
           checkGameEnd(roomId);
+        } else if (action === 'insurance') {
+          // 保险
+          if (player.hand.length === 2 && room.dealerHand[0].value === 'A') {
+            const insuranceAmount = player.bet / 2;
+            player.insurance = insuranceAmount;
+            player.score -= insuranceAmount; // 扣除保险金额
+            
+            // 检查庄家是否是黑杰克
+            const dealerIsBlackjack = calculateHandValue(room.dealerHand) === 21;
+            if (dealerIsBlackjack) {
+              // 庄家是黑杰克，保险生效，玩家赢回一倍保险金
+              player.score += insuranceAmount * 2;
+            }
+            // 如果庄家不是黑杰克，玩家输掉保险金，游戏继续
+          }
         }
         
         // 通知客户端玩家状态更新
@@ -506,8 +636,8 @@ io.on('connection', (socket) => {
   function checkGameEnd(roomId) {
     const room = rooms[roomId];
     
-    // 跳过庄家，因为庄家不需要操作
-    while (room.currentPlayerIndex < room.players.length && room.players[room.currentPlayerIndex].id === room.dealer) {
+    // 跳过庄家和积分不足的玩家，因为他们不需要操作
+    while (room.currentPlayerIndex < room.players.length && (room.players[room.currentPlayerIndex].id === room.dealer || room.players[room.currentPlayerIndex].score <= 0)) {
       room.currentPlayerIndex++;
     }
     
@@ -531,10 +661,14 @@ io.on('connection', (socket) => {
       const splitPlayerScores = {};
       
       for (const player of room.players) {
-        if (player.id === room.dealer) {
+        if (player.id === room.dealer || player.score <= 0) {
           // 庄家不参与胜负判定，跳过
           continue;
         }
+        
+        // 检查是否是黑杰克（前两张牌是A和10点牌）
+        const isBlackjack = player.hand.length === 2 && player.value === 21;
+        const dealerIsBlackjack = room.dealerHand.length === 2 && room.dealerValue === 21;
         
         if (player.status === 'busted') {
           player.result = 'lose';
@@ -545,6 +679,18 @@ io.on('connection', (socket) => {
           // 投降已经处理过了，跳过
           dealerWins++;
           totalLosingBets += player.bet / 2; // 投降只输一半
+        } else if (isBlackjack && !dealerIsBlackjack) {
+          // 玩家黑杰克，庄家不是黑杰克
+          player.result = 'win';
+          player.score += player.bet * 1.5; // 黑杰克赢得1.5倍赌注
+          dealerLosses++;
+          totalWinningBets += player.bet * 1.5;
+        } else if (dealerIsBlackjack && !isBlackjack) {
+          // 庄家黑杰克，玩家不是黑杰克
+          player.result = 'lose';
+          player.score -= player.bet; // 输了扣积分
+          dealerWins++;
+          totalLosingBets += player.bet;
         } else if (room.dealerValue > 21) {
           player.result = 'win';
           player.score += player.bet; // 赢了加积分
@@ -642,44 +788,55 @@ io.on('connection', (socket) => {
       const room = rooms[roomId];
       
       if (room && room.gameState === 'ended') {
+        console.log('重新开始游戏，当前游戏状态:', room.gameState);
         // 重置游戏
         room.deck = generateDeck();
         room.currentPlayerIndex = 0;
-        room.gameState = 'playing';
+        room.gameState = 'waiting';
+        console.log('重置游戏状态为:', room.gameState);
         
         // 重置玩家，移除分牌产生的额外玩家
         const originalPlayers = room.players.filter(p => p.id !== room.dealer);
-        const dealer = room.players.find(p => p.id === room.dealer);
+        let dealer = room.players.find(p => p.id === room.dealer);
+        
+        // 检查庄家积分是否为负数，如果是，重置庄家
+        if (dealer && dealer.score < 0) {
+          console.log('庄家积分不足，重置庄家');
+          room.dealer = null;
+          dealer = null;
+          // 通知所有玩家庄家已爆仓
+          io.to(roomId).emit('error', '庄家已爆仓，需要重新申请坐庄');
+        }
+        
         room.players = [dealer, ...originalPlayers].filter(Boolean);
         
         // 重置玩家状态
         for (const player of room.players) {
-          player.hand = [room.deck.pop(), room.deck.pop()];
-          player.value = calculateHandValue(player.hand);
-          player.status = 'playing';
-          player.result = null;
-          player.bet = 100; // 初始下注
+          if (player.id !== room.dealer) {
+            player.hand = [];
+            player.value = 0;
+            player.status = 'waiting';
+            player.result = null;
+            player.bet = 0; // 重置下注金额，强制玩家在下一局重新下注
+            player.ready = false; // 重置准备状态，强制玩家在下一局重新确认下注
+          }
         }
         
         // 重置庄家
-        room.dealerHand = [room.deck.pop(), room.deck.pop()];
-        room.dealerValue = calculateHandValue(room.dealerHand);
+        room.dealerHand = [];
+        room.dealerValue = 0;
         
-        // 跳过庄家，设置初始玩家索引
-        while (room.currentPlayerIndex < room.players.length && room.players[room.currentPlayerIndex].id === room.dealer) {
-          room.currentPlayerIndex++;
-        }
-        
-        io.to(roomId).emit('gameStarted', {
+        // 通知客户端游戏状态已重置为等待下注
+        io.to(roomId).emit('gameReset', {
           players: room.players,
-          dealerHand: [room.dealerHand[0], { suit: '?', value: '?' }],
-          currentPlayerIndex: room.currentPlayerIndex,
           gameState: room.gameState,
           dealer: room.dealer
         });
       }
     }
   });
+
+
   
   // 玩家离开
   socket.on('leaveRoom', () => {
@@ -704,8 +861,14 @@ io.on('connection', (socket) => {
           room.owner = room.players[0].id;
         }
         
-        if (room.players.length === 0) {
-          // 房间为空，删除房间
+        // 过滤掉分牌产生的玩家，只保留原始玩家和庄家
+        const realPlayers = room.players.filter(p => !p.id.includes('_split'));
+        
+        // 检查房间中是否只剩下系统庄家
+        const onlySystemDealer = realPlayers.length === 1 && realPlayers[0].id.includes('system_dealer');
+        
+        if (room.players.length === 0 || onlySystemDealer) {
+          // 房间为空或只剩下系统庄家，删除房间
           delete rooms[roomId];
         } else {
           // 通知其他玩家
@@ -748,8 +911,14 @@ io.on('connection', (socket) => {
           room.owner = room.players[0].id;
         }
         
-        if (room.players.length === 0) {
-          // 房间为空，删除房间
+        // 过滤掉分牌产生的玩家，只保留原始玩家和庄家
+        const realPlayers = room.players.filter(p => !p.id.includes('_split'));
+        
+        // 检查房间中是否只剩下系统庄家
+        const onlySystemDealer = realPlayers.length === 1 && realPlayers[0].id.includes('system_dealer');
+        
+        if (room.players.length === 0 || onlySystemDealer) {
+          // 房间为空或只剩下系统庄家，删除房间
           delete rooms[roomId];
         } else {
           // 通知其他玩家
