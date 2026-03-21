@@ -30,32 +30,69 @@ function App() {
   ]; // 音乐风格列表
 
   // 背景音乐管理
-  useEffect(() => {
-    let audio = null;
-    
-    // 模拟不同风格的背景音乐URL
-    const musicUrls = [
-      'https://example.com/music1.mp3', // 轻松愉快
-      'https://example.com/music2.mp3', // 紧张刺激
-      'https://example.com/music3.mp3', // 神秘悬疑
-      'https://example.com/music4.mp3', // 古典优雅
-      'https://example.com/music5.mp3'  // 现代流行
-    ];
-    
-    if (musicEnabled) {
-      audio = new Audio(musicUrls[currentMusicStyle]);
-      audio.loop = true;
-      audio.volume = 0.5;
-      audio.play().catch(e => console.log('无法播放背景音乐:', e));
+  const [audio, setAudio] = useState(null);
+  
+  // 处理用户交互，启动背景音乐
+  const handleUserInteraction = () => {
+    if (musicEnabled && !audio) {
+      // 模拟不同风格的背景音乐URL
+      const musicUrls = [
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // 轻松愉快
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // 紧张刺激
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // 神秘悬疑
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // 古典优雅
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'  // 现代流行
+      ];
+      
+      const newAudio = new Audio(musicUrls[currentMusicStyle]);
+      newAudio.loop = true;
+      newAudio.volume = 0.5;
+      newAudio.play().catch(e => console.log('无法播放背景音乐:', e));
+      setAudio(newAudio);
     }
-    
+  };
+  
+  // 监听音乐状态变化
+  useEffect(() => {
+    if (audio) {
+      if (musicEnabled) {
+        audio.play().catch(e => console.log('无法播放背景音乐:', e));
+      } else {
+        audio.pause();
+      }
+    }
+  }, [musicEnabled]);
+  
+  // 监听音乐风格变化
+  useEffect(() => {
+    if (audio) {
+      audio.pause();
+      // 模拟不同风格的背景音乐URL
+      const musicUrls = [
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // 轻松愉快
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // 紧张刺激
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // 神秘悬疑
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // 古典优雅
+        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'  // 现代流行
+      ];
+      
+      const newAudio = new Audio(musicUrls[currentMusicStyle]);
+      newAudio.loop = true;
+      newAudio.volume = 0.5;
+      newAudio.play().catch(e => console.log('无法播放背景音乐:', e));
+      setAudio(newAudio);
+    }
+  }, [currentMusicStyle]);
+  
+  // 组件卸载时停止音乐
+  useEffect(() => {
     return () => {
       if (audio) {
         audio.pause();
-        audio = null;
+        setAudio(null);
       }
     };
-  }, [musicEnabled, currentMusicStyle]);
+  }, []);
 
   useEffect(() => {
     // 开发环境连接 localhost，生产环境生产环境连接 Railway 后端
@@ -254,6 +291,9 @@ function App() {
   }, [page, socket]);
 
   const handleEnterGame = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (nickname.trim()) {
       // 保存昵称到本地存储
       localStorage.setItem('playerName', nickname.trim());
@@ -276,6 +316,9 @@ function App() {
   };
 
   const handleCreateRoom = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       socket.emit('createRoom');
     } else {
@@ -284,6 +327,9 @@ function App() {
   };
 
   const handleJoinRoom = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       socket.emit('joinRoom', roomId);
     } else {
@@ -292,6 +338,9 @@ function App() {
   };
 
   const handleJoinExistingRoom = (existingRoomId) => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       setRoomId(existingRoomId);
       socket.emit('joinRoom', existingRoomId);
@@ -301,6 +350,9 @@ function App() {
   };
 
   const handlePlayerAction = (action, handIndex) => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     console.log('handlePlayerAction called:', action, handIndex);
     if (socket) {
       socket.emit('playerAction', action, handIndex);
@@ -310,11 +362,17 @@ function App() {
   };
 
   const handleBet = (amount) => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     setBetAmount(amount);
     // 只更新本地下注金额，不发送到服务器
   };
 
   const handleRestartGame = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       socket.emit('restartGame');
     } else {
@@ -323,6 +381,9 @@ function App() {
   };
 
   const handleReadyGame = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       socket.emit('readyGame', !player?.ready);
     } else {
@@ -331,6 +392,9 @@ function App() {
   };
 
   const handleApplyDealer = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       socket.emit('applyDealer');
     } else {
@@ -339,11 +403,17 @@ function App() {
   };
 
   const handleCopyRoomId = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     navigator.clipboard.writeText(currentRoom);
     alert('房间号已复制到剪贴板');
   };
 
   const handleLeaveRoom = () => {
+    // 处理用户交互，启动背景音乐
+    handleUserInteraction();
+    
     if (socket) {
       socket.emit('leaveRoom');
     } else {
