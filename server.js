@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,6 +55,53 @@ function generateDeck() {
   }
   
   return deck;
+}
+
+// 读取排行榜
+function readLeaderboard() {
+  try {
+    const data = fs.readFileSync(path.join(__dirname, 'leaderboard.json'), 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('读取排行榜失败:', error);
+    return [];
+  }
+}
+
+// 保存排行榜
+function saveLeaderboard(leaderboard) {
+  try {
+    fs.writeFileSync(path.join(__dirname, 'leaderboard.json'), JSON.stringify(leaderboard, null, 2));
+  } catch (error) {
+    console.error('保存排行榜失败:', error);
+  }
+}
+
+// 更新排行榜
+function updateLeaderboard(name, score) {
+  const leaderboard = readLeaderboard();
+  
+  // 检查是否已存在该玩家的记录
+  const existingIndex = leaderboard.findIndex(entry => entry.name === name);
+  
+  if (existingIndex !== -1) {
+    // 如果存在，只更新分数如果新分数更高
+    if (score > leaderboard[existingIndex].score) {
+      leaderboard[existingIndex].score = score;
+    }
+  } else {
+    // 如果不存在，添加新记录
+    leaderboard.push({ name, score });
+  }
+  
+  // 按分数降序排序
+  leaderboard.sort((a, b) => b.score - a.score);
+  
+  // 只保留前10名
+  const topLeaderboard = leaderboard.slice(0, 10);
+  
+  saveLeaderboard(topLeaderboard);
+  return topLeaderboard;
 }
 
 // 计算手牌点数
@@ -114,6 +162,12 @@ io.on('connection', (socket) => {
   // 获取公开房间列表
   socket.on('getPublicRooms', () => {
     socket.emit('publicRooms', { rooms: getPublicRooms() });
+  });
+  
+  // 获取排行榜
+  socket.on('getLeaderboard', () => {
+    const leaderboard = readLeaderboard();
+    socket.emit('leaderboardData', { leaderboard });
   });
   
   // 创建房间
@@ -596,7 +650,7 @@ io.on('connection', (socket) => {
         } else if (action === 'surrender') {
           // 投降
           player.status = 'surrendered';
-          player.result = 'lose';
+          player.result = 'surrender';
           player.score -= player.bet / 2; // 投降只输一半
           room.currentPlayerIndex++;
           checkGameEnd(roomId);
@@ -724,6 +778,8 @@ io.on('connection', (socket) => {
         // 更新玩家信息
         if (players[player.id]) {
           players[player.id].player.score = player.score;
+          // 更新排行榜
+          updateLeaderboard(player.name, player.score);
         }
       }
       

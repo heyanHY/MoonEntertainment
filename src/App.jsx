@@ -21,6 +21,8 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false); // 设置菜单是否打开
   const [musicEnabled, setMusicEnabled] = useState(true); // 背景音乐是否开启
   const [currentMusicStyle, setCurrentMusicStyle] = useState(0); // 当前音乐风格索引
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false); // 排行榜弹窗是否打开
+  const [leaderboard, setLeaderboard] = useState([]); // 排行榜数据
   const musicStyles = [
     '轻松愉快',
     '紧张刺激',
@@ -50,6 +52,19 @@ function App() {
       newAudio.play().catch(e => console.log('无法播放背景音乐:', e));
       setAudio(newAudio);
     }
+  };
+  
+  // 获取排行榜数据
+  const getLeaderboard = () => {
+    if (socket) {
+      socket.emit('getLeaderboard');
+    }
+  };
+  
+  // 打开排行榜弹窗
+  const openLeaderboard = () => {
+    getLeaderboard();
+    setLeaderboardOpen(true);
   };
   
   // 监听音乐状态变化
@@ -278,6 +293,11 @@ function App() {
     newSocket.on('error', (message) => {
       setError(message);
     });
+    
+    // 监听排行榜数据
+    newSocket.on('leaderboardData', (data) => {
+      setLeaderboard(data.leaderboard);
+    });
 
     return () => {
       newSocket.disconnect();
@@ -440,6 +460,14 @@ function App() {
                 {error}
               </div>
             )}
+            <div className="w-full mb-6 flex justify-center">
+              <button
+                onClick={openLeaderboard}
+                className="px-6 py-2 text-yellow-300 font-bold text-xl underline hover:text-yellow-400 transition-colors w-full max-w-xs text-center bg-transparent border-none shadow-none"
+              >
+                排行榜
+              </button>
+            </div>
             <div className="w-full mb-8 flex justify-center px-4">
               <input
                 type="text"
@@ -480,6 +508,43 @@ function App() {
                 </li>
               </ul>
             </div>
+            
+            {/* 排行榜弹窗 */}
+            {leaderboardOpen && (
+              <div className="fixed inset-0 bg-indigo-900 bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 flex items-center justify-center z-50">
+                <div className="bg-gradient-to-br from-blue-800 via-purple-800 to-indigo-900 p-8 rounded-xl border-2 border-yellow-500 shadow-2xl w-full max-w-md relative">
+                  <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-3xl font-bold text-yellow-300 text-center w-full">排行榜</h2>
+                    <button
+                      onClick={() => setLeaderboardOpen(false)}
+                      className="absolute top-4 right-4 bg-white text-black w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    {leaderboard.length > 0 ? (
+                      leaderboard.map((entry, index) => (
+                        <div key={index} className="flex justify-between items-center p-4 bg-indigo-900 bg-opacity-60 rounded-lg border border-indigo-700">
+                          <div className="flex items-center">
+                            <span className={`font-bold mr-4 text-xl ${index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-300' : index === 2 ? 'text-amber-700' : 'text-white'}`}>
+                              {index + 1}
+                            </span>
+                            <span className="text-white font-medium">{entry.name}</span>
+                          </div>
+                          <span className="text-yellow-300 font-bold text-xl">{entry.score}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12">
+                        <div className="text-6xl mb-6">🏆</div>
+                        <div className="text-white text-xl">暂无记录</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -859,8 +924,8 @@ function App() {
                             点数: {mainPlayer?.value || 0}
                           </div>
                           <div className="mb-6 p-4 rounded-lg bg-green-900">
-                            <div className={`text-center text-2xl font-bold ${mainPlayer?.hand?.length === 2 && mainPlayer?.value === 21 ? 'text-green-400' : mainPlayer?.result === 'win' ? 'text-green-400' : mainPlayer?.result === 'lose' ? 'text-red-400' : 'text-yellow-400'}`}>
-                              {mainPlayer?.hand?.length === 2 && mainPlayer?.value === 21 ? '黑杰克！' : mainPlayer?.result === 'win' ? '胜利！' : mainPlayer?.result === 'lose' ? '失败！' : '平局！'}
+                            <div className={`text-center text-2xl font-bold ${mainPlayer?.hand?.length === 2 && mainPlayer?.value === 21 ? 'text-green-400' : mainPlayer?.result === 'win' ? 'text-green-400' : mainPlayer?.result === 'surrender' ? 'text-yellow-400' : mainPlayer?.result === 'lose' ? 'text-red-400' : 'text-yellow-400'}`}>
+                              {mainPlayer?.hand?.length === 2 && mainPlayer?.value === 21 ? '黑杰克！' : mainPlayer?.result === 'win' ? '胜利！' : mainPlayer?.result === 'surrender' ? '投降！' : mainPlayer?.result === 'lose' ? '失败！' : '平局！'}
                             </div>
                             <div className="text-center text-white mt-2">
                               {(() => {
@@ -869,6 +934,9 @@ function App() {
                                   const currentScore = mainPlayer?.score || lastScore;
                                   const scoreChange = currentScore - lastScore;
                                   return `赢得 ${Math.abs(scoreChange)} 积分`;
+                                } else if (mainPlayer?.result === 'surrender') {
+                                  // 投降时输掉一半的下注积分
+                                  return `输掉 ${Math.floor((mainPlayer?.bet || 0) / 2)} 积分`;
                                 } else if (mainPlayer?.result === 'lose') {
                                   // 直接使用下注金额计算输掉的积分
                                   return `输掉 ${mainPlayer?.bet || 0} 积分`;
@@ -1043,8 +1111,8 @@ function App() {
                               >
                                 停牌
                               </button>
-                              {/* 加倍按钮 - 只在初始两张牌时显示 */}
-                              {mainPlayer?.hand?.length === 2 && (
+                              {/* 加倍按钮 - 只在初始两张牌且下注不超过总积分一半时显示 */}
+                              {mainPlayer?.hand?.length === 2 && mainPlayer?.bet <= mainPlayer?.score / 2 && (
                                 <button 
                                   onClick={() => handlePlayerAction('double')}
                                   className="px-4 py-2 bg-yellow-600 bg-gradient-to-r from-yellow-500 to-yellow-700 text-white font-bold rounded-full shadow-md hover:shadow-lg transition-all"
@@ -1052,10 +1120,10 @@ function App() {
                                   加倍
                                 </button>
                               )}
-                              {/* 分牌按钮 - 只在初始两张牌且点数相同时显示 */}
+                              {/* 分牌按钮 - 只在初始两张牌且点数相同且下注不超过总积分一半时显示 */}
                               {(() => {
                                 const playerHand = mainPlayer?.hand;
-                                if (playerHand?.length === 2) {
+                                if (playerHand?.length === 2 && mainPlayer?.bet <= mainPlayer?.score / 2) {
                                   // 计算两张牌的点数
                                   const getCardValue = (card) => {
                                     if (['J', 'Q', 'K'].includes(card.value)) {
