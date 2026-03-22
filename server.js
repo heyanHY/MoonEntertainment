@@ -778,8 +778,11 @@ io.on('connection', (socket) => {
         // 更新玩家信息
         if (players[player.id]) {
           players[player.id].player.score = player.score;
-          // 更新排行榜
-          updateLeaderboard(player.name, player.score);
+          // 跳过分牌玩家，不更新排行榜
+          if (!player.id.includes('_split')) {
+            // 更新排行榜
+            updateLeaderboard(player.name, player.score);
+          }
         }
       }
       
